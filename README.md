@@ -12,7 +12,8 @@ Open `BasicTo6502/BasicTo6502.yyp` in GameMaker LTS 2026.0 and run.
 ## VICE and the character ROM
 The C64 ROMs are not included. On start-up the app finds VICE (INI override, a
 bundled copy at `vice/win/bin/x64sc.exe`, or `C:\Program Files\VICE\...`) and reads
-the character ROM from VICE's `C64` folder (`chargen` or `chargen-906143-02.bin`).
+the character ROM from VICE's `C64` folder (`chargen-901225-01.bin` or `chargen`;
+the Japanese `chargen-906143-02.bin` is skipped).
 
 If nothing is found, press **F10** and pick `x64sc.exe` or a chargen ROM file.
 Settings are saved to `basicto6502.ini` in the app's save folder.

@@ -1,0 +1,64 @@
+diff --git a/BasicTo6502/scripts/scr_chargen/scr_chargen.gml b/BasicTo6502/scripts/scr_chargen/scr_chargen.gml
+index 585d0eb..65680bb 100644
+--- a/BasicTo6502/scripts/scr_chargen/scr_chargen.gml
++++ b/BasicTo6502/scripts/scr_chargen/scr_chargen.gml
+@@ -3,27 +3,38 @@
+ /// install (VICE distributes the C64 ROMs with permission) or a user-chosen file.
+ 
+ /// @function scr_chargen_find_in_dir(_dir)
+-/// @description Looks for a C64 chargen ROM inside _dir/C64. Handles both the
+-///              old VICE name (chargen) and the 3.6+ name (chargen-906143-02.bin).
++/// @description Looks for the standard C64 chargen ROM inside _dir/C64.
++///              VICE 3.6+ names it chargen-901225-01.bin; older VICE uses chargen.
++///              chargen-906143-02.bin is the JAPANESE ROM and is never picked.
+ function scr_chargen_find_in_dir(_dir)
+ {
+     if (_dir == "") { return ""; }
+ 
+     var _candidates = [
++        _dir + "/C64/chargen-901225-01.bin",
+         _dir + "/C64/chargen",
+-        _dir + "/C64/chargen-906143-02.bin",
+-        _dir + "/chargen",
+-        _dir + "/chargen-906143-02.bin"
++        _dir + "/chargen-901225-01.bin",
++        _dir + "/chargen"
+     ];
+     for (var _i = 0; _i < array_length(_candidates); _i++)
+     {
+         if (file_exists(_candidates[_i])) { return _candidates[_i]; }
+     }
+ 
++    // Any other chargen* file, skipping the Japanese ROM
++    var _result = "";
+     var _found = file_find_first(_dir + "/C64/chargen*", 0);
++    while (_found != "")
++    {
++        if (string_pos("906143", _found) == 0)
++        {
++            _result = _dir + "/C64/" + _found;
++            break;
++        }
++        _found = file_find_next();
++    }
+     file_find_close();
+-    if (_found != "") { return _dir + "/C64/" + _found; }
+-    return "";
++    return _result;
+ }
+ 
+ /// @function scr_chargen_resolve_path(_vice_path)
+diff --git a/README.md b/README.md
+index f4adfe8..c118de2 100644
+--- a/README.md
++++ b/README.md
+@@ -12,7 +12,8 @@ Open `BasicTo6502/BasicTo6502.yyp` in GameMaker LTS 2026.0 and run.
+ ## VICE and the character ROM
+ The C64 ROMs are not included. On start-up the app finds VICE (INI override, a
+ bundled copy at `vice/win/bin/x64sc.exe`, or `C:\Program Files\VICE\...`) and reads
+-the character ROM from VICE's `C64` folder (`chargen` or `chargen-906143-02.bin`).
++the character ROM from VICE's `C64` folder (`chargen-901225-01.bin` or `chargen`;
++the Japanese `chargen-906143-02.bin` is skipped).
+ 
+ If nothing is found, press **F10** and pick `x64sc.exe` or a chargen ROM file.
+ Settings are saved to `basicto6502.ini` in the app's save folder.

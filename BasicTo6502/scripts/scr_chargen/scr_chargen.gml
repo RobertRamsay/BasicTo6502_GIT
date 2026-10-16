@@ -3,27 +3,38 @@
 /// install (VICE distributes the C64 ROMs with permission) or a user-chosen file.
 
 /// @function scr_chargen_find_in_dir(_dir)
-/// @description Looks for a C64 chargen ROM inside _dir/C64. Handles both the
-///              old VICE name (chargen) and the 3.6+ name (chargen-906143-02.bin).
+/// @description Looks for the standard C64 chargen ROM inside _dir/C64.
+///              VICE 3.6+ names it chargen-901225-01.bin; older VICE uses chargen.
+///              chargen-906143-02.bin is the JAPANESE ROM and is never picked.
 function scr_chargen_find_in_dir(_dir)
 {
     if (_dir == "") { return ""; }
 
     var _candidates = [
+        _dir + "/C64/chargen-901225-01.bin",
         _dir + "/C64/chargen",
-        _dir + "/C64/chargen-906143-02.bin",
-        _dir + "/chargen",
-        _dir + "/chargen-906143-02.bin"
+        _dir + "/chargen-901225-01.bin",
+        _dir + "/chargen"
     ];
     for (var _i = 0; _i < array_length(_candidates); _i++)
     {
         if (file_exists(_candidates[_i])) { return _candidates[_i]; }
     }
 
+    // Any other chargen* file, skipping the Japanese ROM
+    var _result = "";
     var _found = file_find_first(_dir + "/C64/chargen*", 0);
+    while (_found != "")
+    {
+        if (string_pos("906143", _found) == 0)
+        {
+            _result = _dir + "/C64/" + _found;
+            break;
+        }
+        _found = file_find_next();
+    }
     file_find_close();
-    if (_found != "") { return _dir + "/C64/" + _found; }
-    return "";
+    return _result;
 }
 
 /// @function scr_chargen_resolve_path(_vice_path)
