@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_panel",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_panel",
+  "parent":{
+    "name":"Display",
+    "path":"folders/Scripts/Display.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,7 @@
+# GameMaker
+*.resource_order
+*.old
+/BasicTo6502/tmp/
+# OS
+.DS_Store
+Thumbs.db

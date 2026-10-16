@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_basic_program",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_basic_program",
+  "parent":{
+    "name":"Basic",
+    "path":"folders/Scripts/Basic.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

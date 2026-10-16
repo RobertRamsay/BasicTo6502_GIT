@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_vice",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_vice",
+  "parent":{
+    "name":"IO",
+    "path":"folders/Scripts/IO.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

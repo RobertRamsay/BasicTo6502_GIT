@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_b2_macros",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_b2_macros",
+  "parent":{
+    "name":"Core",
+    "path":"folders/Scripts/Core.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
