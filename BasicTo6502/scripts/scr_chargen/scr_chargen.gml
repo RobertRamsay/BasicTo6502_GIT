@@ -2,6 +2,32 @@
 /// The ROM is never shipped with this app: it is read at runtime from a VICE
 /// install (VICE distributes the C64 ROMs with permission) or a user-chosen file.
 
+/// @function scr_chargen_is_standard(_path)
+/// @description True only for the standard C64 character ROM (901225-01):
+///              4096 bytes, glyph 0 is '@' and glyph 257 is lower-case 'a'.
+///              Rejects the Japanese ROM and any other file, whatever its name.
+function scr_chargen_is_standard(_path)
+{
+    if (_path == "") { return false; }
+    if (!file_exists(_path)) { return false; }
+
+    var _buf = buffer_load(_path);
+    var _ok = false;
+    if (buffer_get_size(_buf) == 4096)
+    {
+        var _at = [0x3C, 0x66, 0x6E, 0x6E, 0x60, 0x62, 0x3C, 0x00];
+        var _a  = [0x00, 0x00, 0x3C, 0x06, 0x3E, 0x66, 0x3E, 0x00];
+        _ok = true;
+        for (var _i = 0; _i < 8; _i++)
+        {
+            if (buffer_peek(_buf, _i, buffer_u8) != _at[_i]) { _ok = false; }
+            if (buffer_peek(_buf, (257 * 8) + _i, buffer_u8) != _a[_i]) { _ok = false; }
+        }
+    }
+    buffer_delete(_buf);
+    return _ok;
+}
+
 /// @function scr_chargen_find_in_dir(_dir)
 /// @description Looks for the standard C64 chargen ROM inside _dir/C64.
 ///              VICE 3.6+ names it chargen-901225-01.bin; older VICE uses chargen.
@@ -18,15 +44,15 @@ function scr_chargen_find_in_dir(_dir)
     ];
     for (var _i = 0; _i < array_length(_candidates); _i++)
     {
-        if (file_exists(_candidates[_i])) { return _candidates[_i]; }
+        if (scr_chargen_is_standard(_candidates[_i])) { return _candidates[_i]; }
     }
 
-    // Any other chargen* file, skipping the Japanese ROM
+    // Any other chargen* file that passes the content check
     var _result = "";
     var _found = file_find_first(_dir + "/C64/chargen*", 0);
     while (_found != "")
     {
-        if (string_pos("906143", _found) == 0)
+        if (scr_chargen_is_standard(_dir + "/C64/" + _found))
         {
             _result = _dir + "/C64/" + _found;
             break;
@@ -45,7 +71,7 @@ function scr_chargen_resolve_path(_vice_path)
     ini_open(B2_INI);
     var _override = ini_read_string("chargen", "path", "");
     ini_close();
-    if (_override != "" && file_exists(_override)) { return _override; }
+    if (scr_chargen_is_standard(_override)) { return _override; }
 
     if (_vice_path != "")
     {
@@ -122,6 +148,15 @@ function scr_machine_reload_chargen()
     chargen_path = scr_chargen_resolve_path(vice_path);
     chargen_sprite = scr_chargen_load(chargen_path);
     chargen_ok = sprite_exists(chargen_sprite);
+
+    if (chargen_ok)
+    {
+        chargen_status = "ROM: " + filename_name(chargen_path);
+    }
+    else
+    {
+        chargen_status = "ROM: NOT FOUND";
+    }
 }
 
 /// @function scr_locate_vice_or_chargen()
@@ -135,7 +170,16 @@ function scr_locate_vice_or_chargen()
     ini_open(B2_INI);
     if (string_pos("chargen", _name) > 0)
     {
-        ini_write_string("chargen", "path", _file);
+        if (scr_chargen_is_standard(_file))
+        {
+            ini_write_string("chargen", "path", _file);
+        }
+        else
+        {
+            ini_close();
+            show_message("That file is not the standard C64 character ROM (901225-01).\nThe Japanese ROM (906143-02) and other files are not supported.");
+            return;
+        }
     }
     else
     {

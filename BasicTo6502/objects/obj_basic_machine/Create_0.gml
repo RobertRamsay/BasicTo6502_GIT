@@ -27,6 +27,7 @@ crt_u_mask = shader_get_uniform(shd_crt, "u_mask");
 chargen_sprite = -1;
 chargen_path = "";
 chargen_ok = false;
+chargen_status = "ROM: NOT FOUND";
 vice_path = "";
 
 // Screen memory (screen codes) and colour RAM

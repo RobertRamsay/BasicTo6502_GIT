@@ -51,7 +51,9 @@ if (surface_exists(c64_surface))
 if (!chargen_ok)
 {
     draw_set_colour(c_white);
-    draw_text(screen_draw_x + 16, screen_draw_y + 16, "C64 character ROM not found.\nPress F10 and select VICE's x64sc.exe or a chargen ROM file.");
+    var _vice_text = vice_path;
+    if (_vice_text == "") { _vice_text = "(not found)"; }
+    draw_text(screen_draw_x + 16, screen_draw_y + 16, "Standard C64 character ROM (901225-01) not found.\nVICE: " + _vice_text + "\nPress F10 and select VICE's x64sc.exe or a chargen ROM file.");
 }
 
 // Info panel

@@ -56,3 +56,11 @@ graphics in upper-case mode. Pasted text is treated as unshifted so listings tok
 4. Integer-subset compiler and the live 6502 translation panel (bytes and cycles)
 5. KERNAL vs custom routine variants, selectable per line
 6. Strings, then floating point
+
+## Bundled VICE
+Official VICE 3.9 (GTK3, win64, GPL v2) is included under
+`BasicTo6502/datafiles/vice/win`, trimmed to what the C64 needs: `x64sc.exe` plus its
+DLLs, `petcat`, `c1541`, and the `C64`, `DRIVES`, `PRINTER`, `common`, `lib`, `share`
+and `hotkeys` folders. The app uses it automatically; an F10 choice saved in the INI
+still takes priority. When distributing builds, keep `COPYING` alongside and link to
+the VICE source (https://vice-emu.sourceforge.io/) to meet the GPL.

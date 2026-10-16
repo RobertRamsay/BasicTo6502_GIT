@@ -126,6 +126,7 @@ function scr_panel_draw()
 
     scr_panel_text(_row, "F9  Display: " + _mode_name, 15); _row++;
     scr_panel_text(_row, "F10 VICE: " + _vice_name, 15); _row++;
+    scr_panel_text(_row, "    " + string_copy(chargen_status, 1, B2_PANEL_CHARS - 4), 12); _row++;
     scr_panel_text(_row, "F11 Fullscreen", 15); _row++;
     scr_panel_text(_row, "Shift+Ins Paste", 15); _row++;
     scr_panel_text(_row, "LCtrl=C=  Tab=CTRL", 15); _row++;
