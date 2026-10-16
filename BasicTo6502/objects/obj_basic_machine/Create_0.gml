@@ -16,6 +16,7 @@ screen_draw_scale = 0;
 panel_x = 0;
 panel_y = 0;
 panel_row_h = 8 * B2_PANEL_SCALE + 2;
+panel_cursor_y = 0;
 
 // CRT shader uniforms
 crt_u_source_size = shader_get_uniform(shd_crt, "u_source_size");
@@ -81,6 +82,21 @@ mem_line_count = 0;
 mem_program_bytes = 2;
 mem_vartab = B2_BASIC_START + 2;
 mem_free = B2_BASIC_END - mem_vartab;
+
+// Compiler and live 6502 translation
+scr_asm_build_tables();
+program_version = 0;
+stats_version = -1;
+prog6502_size = 0;
+prog6502_issues = 0;
+tr_key = "";
+tr_valid = false;
+tr_entries = [];
+tr_bytes = 0;
+tr_cycles = 0;
+tr_has_jsr = false;
+tr_kind = "ok";
+tr_msg = "";
 
 // Line under the cursor (live tokenised view)
 cursor_line_valid = false;

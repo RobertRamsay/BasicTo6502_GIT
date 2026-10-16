@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_compiler_gen",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_compiler_gen",
+  "parent":{
+    "name":"Compiler",
+    "path":"folders/Scripts/Compiler.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

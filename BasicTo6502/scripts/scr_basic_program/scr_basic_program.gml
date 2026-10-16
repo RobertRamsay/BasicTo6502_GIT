@@ -21,17 +21,20 @@ function scr_program_store_line(_number, _bytes)
         {
             program_lines[_i] = scr_basic_line_create(_number, _bytes);
             program_dirty = true;
+            program_version++;
             return;
         }
         if (_ln > _number)
         {
             array_insert(program_lines, _i, scr_basic_line_create(_number, _bytes));
             program_dirty = true;
+            program_version++;
             return;
         }
     }
     array_push(program_lines, scr_basic_line_create(_number, _bytes));
     program_dirty = true;
+    program_version++;
 }
 
 /// @function scr_program_delete_line(_number)
@@ -44,6 +47,7 @@ function scr_program_delete_line(_number)
         {
             array_delete(program_lines, _i, 1);
             program_dirty = true;
+            program_version++;
             return;
         }
     }
@@ -54,6 +58,7 @@ function scr_program_clear()
 {
     program_lines = [];
     program_dirty = true;
+    program_version++;
 }
 
 /// @function scr_program_build_image()
@@ -95,6 +100,23 @@ function scr_program_update_stats()
     mem_program_bytes = _bytes;
     mem_vartab = B2_BASIC_START + _bytes;
     mem_free = B2_BASIC_END - mem_vartab;
+}
+
+/// @function scr_save_bytes(_path, _bytes)
+/// @description Writes an array of bytes to a file. Returns true on success.
+function scr_save_bytes(_path, _bytes)
+{
+    var _dir = filename_dir(_path);
+    if (_dir != "" && !directory_exists(_dir)) { directory_create(_dir); }
+    var _n = array_length(_bytes);
+    var _buf = buffer_create(max(1, _n), buffer_fixed, 1);
+    for (var _i = 0; _i < _n; _i++)
+    {
+        buffer_write(_buf, buffer_u8, _bytes[_i]);
+    }
+    buffer_save_ext(_buf, _path, 0, _n);
+    buffer_delete(_buf);
+    return file_exists(_path);
 }
 
 /// @function scr_program_save_prg(_path)
@@ -163,5 +185,6 @@ function scr_program_load_prg(_path)
 
     program_lines = _lines;
     program_dirty = true;
+    program_version++;
     return 0;
 }

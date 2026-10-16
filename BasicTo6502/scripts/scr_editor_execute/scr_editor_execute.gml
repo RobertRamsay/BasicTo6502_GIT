@@ -42,7 +42,16 @@ function ed_execute_line(_pet)
         case 148: ed_cmd_save(_tokens); break;                  // SAVE
         case 147: ed_cmd_load(_tokens); break;                  // LOAD
         case 156: ed_print_ready(); break;                      // CLR
-        default:  ed_print_error("DIRECT MODE"); break;         // runs in VICE, not here
+        default:
+            if (ed_tokens_are_word(_tokens, "COMPILE"))
+            {
+                ed_cmd_compile();
+            }
+            else
+            {
+                ed_print_error("DIRECT MODE"); // BASIC statements run in VICE, not here
+            }
+            break;
     }
 }
 
@@ -254,4 +263,76 @@ function ed_cmd_load(_tokens)
     }
     ed_print_ascii("LOADING\n");
     ed_print_ready();
+}
+
+/// @function ed_tokens_are_word(_tokens, _word)
+/// @description True if the line is exactly _word (trailing spaces allowed).
+function ed_tokens_are_word(_tokens, _word)
+{
+    var _n = array_length(_tokens);
+    while (_n > 0 && _tokens[_n - 1] == 32) { _n--; }
+    if (_n != string_length(_word)) { return false; }
+    for (var _i = 0; _i < _n; _i++)
+    {
+        if (_tokens[_i] != ord(string_char_at(_word, _i + 1))) { return false; }
+    }
+    return true;
+}
+
+/// @function ed_cmd_compile()
+/// @description COMPILE: BASIC -> 6502 machine code, saved as a .prg and run in VICE.
+///              Refuses while any line is still waiting on another or not supported yet.
+function ed_cmd_compile()
+{
+    if (array_length(program_lines) == 0)
+    {
+        ed_print_ready();
+        return;
+    }
+
+    var _r = scr_compile_program(program_lines);
+    if (!_r.ok)
+    {
+        var _count = array_length(_r.status_list);
+        var _shown = min(_count, 3);
+        for (var _i = 0; _i < _shown; _i++)
+        {
+            var _s = _r.status_list[_i];
+            var _text = "?" + _s.msg;
+            if (_s.line >= 0) { _text += " IN " + string(_s.line); }
+            ed_print_ascii(_text + "\n");
+        }
+        if (_count > 3) { ed_print_ascii("(" + string(_count - 3) + " MORE)\n"); }
+        if (_r.asm_error != "") { ed_print_ascii("?" + _r.asm_error + "\n"); }
+        ed_print_ready();
+        return;
+    }
+
+    vice_path = scr_vice_resolve_path();
+    if (vice_path == "")
+    {
+        ed_print_ascii("?VICE NOT FOUND  ERROR\nPRESS F10 TO LOCATE X64SC\n");
+        ed_print_ready();
+        return;
+    }
+
+    scr_vice_kill();
+    var _path = game_save_id + "run/compiled.prg";
+    if (!scr_save_bytes(_path, _r.prg))
+    {
+        ed_print_error("FILE WRITE");
+        return;
+    }
+
+    ed_print_ascii("COMPILED: " + string(_r.size) + " BYTES\n");
+    ed_print_ascii("(BASIC: " + string(mem_program_bytes) + " BYTES)\n");
+    if (scr_vice_launch(vice_path, _path))
+    {
+        ed_print_ascii("RUNNING IN VICE\n");
+        ed_print_ready();
+    }
+    else
+    {
+        ed_print_error("VICE LAUNCH");
+    }
 }

@@ -31,6 +31,27 @@ Settings are saved to `basicto6502.ini` in the app's save folder.
 - Panel: program size, text/variable addresses, FRE(0), and the live tokenised
   bytes of the line under the cursor
 
+## Compiling to 6502 (step 4)
+Type `COMPILE` to turn the program into 6502 machine code (a .prg with a
+`10 SYS2061` stub) and run it in VICE. `RUN` still runs it as BASIC, so you can compare.
+
+The panel shows the line under the cursor three ways: the tokenised bytes BASIC
+stores, and the 6502 code it compiles to with addresses, bytes and cycles. Lines
+that wait on another line (a GOTO to a missing line, a FOR without NEXT) are shown
+in yellow; anything not supported yet is shown in red.
+
+Supported so far (integer subset; every number is a signed 16-bit integer):
+- `LET`/assignment, `PRINT` (strings, numbers, `CHR$()`, `;` and `,`), `POKE`, `PEEK()`
+- `IF ... THEN line`, `IF ... THEN statements`, `IF ... GOTO line`
+- `FOR ... TO ... STEP constant` / `NEXT` (including `NEXT J,I`), `GOTO`, `GOSUB`, `RETURN`
+- `DATA` (whole numbers), `READ`, `RESTORE`, `DIM` with a constant size, arrays
+- `+ - * /`, `AND OR NOT`, `= <> < > <= >=`, `ABS()`, `SGN()`, `INT()`, `SYS address`, `END`, `STOP`, `REM`
+
+Integer maths means `7/2` is 3, and values wrap past 32767. Strings, `INPUT`, `GET`,
+`ON`, decimals and the other functions come in later steps.
+
+Zero page used by compiled code: `$57-$69` (temps and runtime), `$FB-$FE` (pointers).
+
 ## Keys (VICE symbolic layout)
 | PC key | C64 |
 |---|---|

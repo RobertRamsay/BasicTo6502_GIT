@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_asm_tables",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_asm_tables",
+  "parent":{
+    "name":"Compiler",
+    "path":"folders/Scripts/Compiler.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

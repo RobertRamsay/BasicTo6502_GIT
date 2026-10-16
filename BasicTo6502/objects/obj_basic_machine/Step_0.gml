@@ -25,6 +25,7 @@ if (blink_timer >= B2_BLINK_FRAMES)
 }
 
 ed_update_cursor_line_info();
+scr_translation_update();
 
 if (program_dirty)
 {
